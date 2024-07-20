@@ -33,6 +33,7 @@ resources:
       Type: AWS::Cognito::UserPool
       Properties:
         UserPoolName: AuthStudy
+        DeletionProtection: ACTIVE
         MfaConfiguration: OFF
         AutoVerifiedAttributes:
           - email
