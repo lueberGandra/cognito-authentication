@@ -28,7 +28,7 @@ custom:
     concurrency: 10
 
 resources:
-  Resources:
+  Resources:       
     AuthStudy:
       Type: AWS::Cognito::UserPool
       Properties:
@@ -62,7 +62,19 @@ resources:
             Mutable: true
             Required: true
             AttributeDataType: String
-
+    AuthStudyClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: AuthStudyClient
+        UserPoolId: !Ref AuthStudy
+        ExplicitAuthFlows:
+          - ALLOW_USER_PASSWORD_AUTH
+          - ALLOW_REFRESH_TOKEN_AUTH
+        TokenValidityUnits: 
+          AccessToken: hours
+          RefreshToken: hours
+        AccessTokenValidity: 3
+        RefreshTokenValidity: 1440 #60 days
 functions:
   hello:
     handler: src/functions/hello.handler
