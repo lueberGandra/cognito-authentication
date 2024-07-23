@@ -1,5 +1,5 @@
 service: live020
-frameworkVersion: '3'
+frameworkVersion: "3"
 
 plugins:
   - serverless-esbuild
@@ -13,6 +13,8 @@ provider:
   runtime: nodejs20.x
   deploymentMethod: direct
   architecture: arm64
+  environment:
+    COGNITO_CLIENT_ID: !Ref AuthStudyClient
 
 custom:
   esbuild:
@@ -21,14 +23,14 @@ custom:
     sourcemap: false
     target: node20
     exclude:
-      - '@aws-sdk/*'
+      - "@aws-sdk/*"
     define:
       require.resolve: undefined
     platform: node
     concurrency: 10
 
 resources:
-  Resources:       
+  Resources:
     AuthStudy:
       Type: AWS::Cognito::UserPool
       Properties:
@@ -70,7 +72,7 @@ resources:
         ExplicitAuthFlows:
           - ALLOW_USER_PASSWORD_AUTH
           - ALLOW_REFRESH_TOKEN_AUTH
-        TokenValidityUnits: 
+        TokenValidityUnits:
           AccessToken: hours
           RefreshToken: hours
         AccessTokenValidity: 3

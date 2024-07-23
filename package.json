@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.616.0",
     "aws-lambda": "^1.0.7"
   },
   "devDependencies": {

@@ -1,4 +1,5 @@
-export function bodyParser(body: string |undefined){
+type IBody = Record<string,any>
+export function bodyParser(body: string |undefined):IBody{
   let ParsedBody = {};
   try{
     if (!body) return ParsedBody;
