@@ -6,12 +6,12 @@ import { signUp } from '@/libs/cognitoClient';
 
 export async function handler(event: APIGatewayProxyEventV2) {
   try {
-    const body = bodyParser(event.body ?? '');
+    const { firstName, lastName, password, email } = bodyParser(event.body ?? '');
     return await signUp({
-      firstName: body.firstName,
-      lastName: body.lastName,
-      Password: body.password,
-      Username: body.email
+      firstName: firstName,
+      lastName: lastName,
+      Password: password,
+      Username: email
     });
 
   } catch (error) {

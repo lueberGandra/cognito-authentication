@@ -1,14 +1,16 @@
 import { response } from '@/utils/response';
-import { CognitoIdentityProviderClient, SignUpCommand, UsernameExistsException } from '@aws-sdk/client-cognito-identity-provider';
+import { CognitoIdentityProviderClient, ConfirmSignUpCommand, SignUpCommand, UsernameExistsException } from '@aws-sdk/client-cognito-identity-provider';
 
 type ISignUp = {
   Password: string, Username: string, firstName: string, lastName: string
 }
+
+const ClientId = process.env.COGNITO_CLIENT_ID;
 export const signUp = async ({ Password, Username, firstName, lastName }: ISignUp): Promise<any> => {
   try {
     const cognitoClient = new CognitoIdentityProviderClient({});
     const command = new SignUpCommand({
-      ClientId: process.env.COGNITO_CLIENT_ID,
+      ClientId,
       Password, Username,
       UserAttributes: [{
         Name: 'given_name', Value: firstName
@@ -28,4 +30,19 @@ export const signUp = async ({ Password, Username, firstName, lastName }: ISignU
   }
 };
 
+type IAccountConfirmation = {
+  ConfirmationCode: string, Username: string
+}
 
+export const accountConfirmation = async ({ ConfirmationCode, Username }: IAccountConfirmation): Promise<any> => {
+  try {
+    const cognitoClient = new CognitoIdentityProviderClient({});
+    const command = new ConfirmSignUpCommand({
+      ClientId, Username, ConfirmationCode
+    });
+    await cognitoClient.send(command);
+    return response(204);
+  } catch (error) {
+    return response(500, { error: 'Internal server error.' });
+  }
+};
