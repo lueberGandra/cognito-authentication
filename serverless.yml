@@ -13,8 +13,15 @@ provider:
   runtime: nodejs20.x
   deploymentMethod: direct
   architecture: arm64
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action: cognito-idp:AdminGetUser
+          Resource: !GetAtt AuthStudy.Arn
   environment:
     COGNITO_CLIENT_ID: !Ref AuthStudyClient
+    COGNITO_POOL_ID: !Ref AuthStudy
   httpApi:
     authorizers:
       CognitoAuthorizer:
