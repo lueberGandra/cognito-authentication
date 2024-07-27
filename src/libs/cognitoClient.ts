@@ -1,11 +1,12 @@
 import { response } from '@/utils/response';
 import { CognitoIdentityProviderClient, ConfirmSignUpCommand, SignUpCommand, UsernameExistsException } from '@aws-sdk/client-cognito-identity-provider';
 
+const ClientId = process.env.COGNITO_CLIENT_ID;
+
 type ISignUp = {
   Password: string, Username: string, firstName: string, lastName: string
 }
 
-const ClientId = process.env.COGNITO_CLIENT_ID;
 export const signUp = async ({ Password, Username, firstName, lastName }: ISignUp): Promise<any> => {
   try {
     const cognitoClient = new CognitoIdentityProviderClient({});
