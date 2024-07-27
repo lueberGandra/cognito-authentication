@@ -3,33 +3,6 @@ import { CognitoIdentityProviderClient, ConfirmSignUpCommand, InitiateAuthComman
 
 const ClientId = process.env.COGNITO_CLIENT_ID;
 
-type ISignUp = {
-  Password: string, Username: string, firstName: string, lastName: string
-}
-
-export const signUp = async ({ Password, Username, firstName, lastName }: ISignUp): Promise<any> => {
-  try {
-    const cognitoClient = new CognitoIdentityProviderClient({});
-    const command = new SignUpCommand({
-      ClientId,
-      Password, Username,
-      UserAttributes: [{
-        Name: 'given_name', Value: firstName
-      },
-      {
-        Name: 'family_name', Value: lastName
-      }
-      ]
-    });
-    const { UserSub } = await cognitoClient.send(command);
-    return response(201, { userExternalId: UserSub });
-  } catch (error) {
-    if (error instanceof UsernameExistsException) {
-      return response(409, { error: 'This email is already in use.' });
-    }
-    return response(500, { error: 'Internal server error.' });
-  }
-};
 
 type IAccountConfirmation = {
   ConfirmationCode: string, Username: string
@@ -67,7 +40,7 @@ export const signIn = async ({ PASSWORD, USERNAME }: ISignIn): Promise<any> => {
     if (!AuthenticationResult) {
       return response(401, { response: 'Invalid credentials.' });
     }
-    return response(201, { response: AuthenticationResult });
+    return response(200, { response: AuthenticationResult });
   } catch (error) {
     if (error instanceof UserNotFoundException) {
       return response(401, { response: 'Invalid credentials.' });
@@ -81,6 +54,57 @@ export const signIn = async ({ PASSWORD, USERNAME }: ISignIn): Promise<any> => {
       return response(401, { response: 'You need to confirm your account before signin.' });
     }
 
+    return response(500, { error: 'Internal server error.' });
+  }
+};
+
+type ISignUp = {
+  Password: string, Username: string, firstName: string, lastName: string
+}
+
+export const signUp = async ({ Password, Username, firstName, lastName }: ISignUp): Promise<any> => {
+  try {
+    const cognitoClient = new CognitoIdentityProviderClient({});
+    const command = new SignUpCommand({
+      ClientId,
+      Password, Username,
+      UserAttributes: [{
+        Name: 'given_name', Value: firstName
+      },
+      {
+        Name: 'family_name', Value: lastName
+      }
+      ]
+    });
+    const { UserSub } = await cognitoClient.send(command);
+    return response(201, { userExternalId: UserSub });
+  } catch (error) {
+    if (error instanceof UsernameExistsException) {
+      return response(409, { error: 'This email is already in use.' });
+    }
+    return response(500, { error: 'Internal server error.' });
+  }
+};
+
+type IRefreshToken = {
+  REFRESH_TOKEN: string
+}
+
+export const refreshToken = async ({ REFRESH_TOKEN, }: IRefreshToken): Promise<any> => {
+  try {
+    const cognitoClient = new CognitoIdentityProviderClient({});
+    const command = new InitiateAuthCommand({
+      ClientId,
+      AuthFlow: 'REFRESH_TOKEN',
+      AuthParameters: { REFRESH_TOKEN }
+    });
+    const { AuthenticationResult } = await cognitoClient.send(command);
+
+    if (!AuthenticationResult) {
+      return response(401, { response: 'Invalid credentials.' });
+    }
+    return response(200, { response: AuthenticationResult });
+  } catch (error) {
     return response(500, { error: 'Internal server error.' });
   }
 };
