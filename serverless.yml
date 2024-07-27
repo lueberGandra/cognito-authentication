@@ -94,6 +94,14 @@ resources:
         AccessTokenValidity: 3
         RefreshTokenValidity: 1440 #60 days
 functions:
+  cognitoCustomMessage:
+    handler: src/functions/customMessage.handler
+    events:
+      - cognitoUserPool:
+         pool: AuthStudy
+         trigger: CustomMessage
+         existing: true
+         forceDeploy: true
   signUp:
     handler: src/functions/signUp.handler
     events:
@@ -137,4 +145,4 @@ functions:
           method: GET
           path: /profile
           authorizer: 
-            name: CognitoAuthorizer
+            name: CognitoAuthorizer 
