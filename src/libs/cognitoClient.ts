@@ -49,17 +49,17 @@ export const accountConfirmation = async ({ ConfirmationCode, Username }: IAccou
 };
 
 type ISignIn = {
-  Password: string, Username: string
+  PASSWORD: string, USERNAME: string
 }
 
-export const signIn = async ({ Password, Username }: ISignIn): Promise<any> => {
+export const signIn = async ({ PASSWORD, USERNAME }: ISignIn): Promise<any> => {
   try {
     const cognitoClient = new CognitoIdentityProviderClient({});
     const command = new InitiateAuthCommand({
       ClientId,
       AuthFlow: 'USER_PASSWORD_AUTH',
       AuthParameters: {
-        Username, Password
+        PASSWORD, USERNAME
       }
     });
     const { AuthenticationResult } = await cognitoClient.send(command);

@@ -7,8 +7,8 @@ export async function handler(event: APIGatewayProxyEventV2) {
   try {
     const { password, email } = bodyParser(event.body ?? '');
     return await signIn({
-      Password: password,
-      Username: email
+      PASSWORD: password,
+      USERNAME: email
     });
 
   } catch (error) {
