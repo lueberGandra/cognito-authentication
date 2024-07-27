@@ -15,6 +15,15 @@ provider:
   architecture: arm64
   environment:
     COGNITO_CLIENT_ID: !Ref AuthStudyClient
+  httpApi:
+    authorizers:
+      CognitoAuthorizer:
+        type: jwt
+        identitySource: $request.header.Authorization
+        issuerUrl: !GetAtt AuthStudy.ProviderURL
+        audience:
+          - !Ref AuthStudyClient
+        
 
 custom:
   esbuild:
@@ -102,3 +111,11 @@ functions:
       - httpApi:
           method: POST
           path: /auth/refresh-token
+  profile:
+    handler: src/functions/profile.handler
+    events:
+      - httpApi:
+          method: GET
+          path: /profile
+          authorizer: 
+            name: CognitoAuthorizer

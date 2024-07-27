@@ -11,6 +11,6 @@ export async function handler(event: APIGatewayProxyEventV2) {
     });
 
   } catch (error) {
-    throw new Error('Signin failed!');
+    throw new Error('Refresh failed!');
   }
 }
