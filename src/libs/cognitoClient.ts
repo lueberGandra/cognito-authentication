@@ -2,7 +2,9 @@ import { response } from "@/utils/response";
 import {
   AdminGetUserCommand,
   CognitoIdentityProviderClient,
+  ConfirmForgotPasswordCommand,
   ConfirmSignUpCommand,
+  ForgotPasswordCommand,
   InitiateAuthCommand,
   NotAuthorizedException,
   SignUpCommand,
@@ -148,11 +150,57 @@ type IGetUser = {
 };
 
 export const getUser = async ({ Username }: IGetUser) => {
-  const cognitoClient = new CognitoIdentityProviderClient({});
-  const command = new AdminGetUserCommand({
-    Username,
-    UserPoolId,
-  });
-  const { UserAttributes } = await cognitoClient.send(command);
-  return response(200, { profile: UserAttributes });
+  try {
+    const cognitoClient = new CognitoIdentityProviderClient({});
+    const command = new AdminGetUserCommand({
+      Username,
+      UserPoolId,
+    });
+    const { UserAttributes } = await cognitoClient.send(command);
+    return response(200, { profile: UserAttributes });
+  } catch (error) {
+    return response(500, { error: "Internal server error." });
+  }
+};
+
+type IForgotPassword = {
+  Username: string;
+};
+export const forgotPassword = async ({ Username }: IForgotPassword) => {
+  try {
+    const cognitoClient = new CognitoIdentityProviderClient({});
+    const command = new ForgotPasswordCommand({
+      ClientId,
+      Username,
+    });
+    await cognitoClient.send(command);
+    return response(204);
+  } catch (error) {
+    return response(500, { error: "Internal server error." });
+  }
+};
+
+type IResetPassword = {
+  ConfirmationCode: string;
+  Username: string;
+  Password: string;
+};
+export const resetPassword = async ({
+  Username,
+  ConfirmationCode,
+  Password,
+}: IResetPassword) => {
+  try {
+    const cognitoClient = new CognitoIdentityProviderClient({});
+    const command = new ConfirmForgotPasswordCommand({
+      ClientId,
+      Username,
+      ConfirmationCode,
+      Password,
+    });
+    await cognitoClient.send(command);
+    return response(204);
+  } catch (error) {
+    return response(500, { error: "Internal server error." });
+  }
 };
