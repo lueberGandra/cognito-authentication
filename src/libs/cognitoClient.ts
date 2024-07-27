@@ -1,5 +1,5 @@
 import { response } from '@/utils/response';
-import { CognitoIdentityProviderClient, ConfirmSignUpCommand, InitiateAuthCommand, SignUpCommand, UsernameExistsException, UserNotConfirmedException, UserNotFoundException } from '@aws-sdk/client-cognito-identity-provider';
+import { CognitoIdentityProviderClient, ConfirmSignUpCommand, InitiateAuthCommand, NotAuthorizedException, SignUpCommand, UsernameExistsException, UserNotConfirmedException, UserNotFoundException } from '@aws-sdk/client-cognito-identity-provider';
 
 const ClientId = process.env.COGNITO_CLIENT_ID;
 
@@ -70,6 +70,10 @@ export const signIn = async ({ PASSWORD, USERNAME }: ISignIn): Promise<any> => {
     return response(201, { response: AuthenticationResult });
   } catch (error) {
     if (error instanceof UserNotFoundException) {
+      return response(401, { response: 'Invalid credentials.' });
+    }
+
+    if (error instanceof NotAuthorizedException) {
       return response(401, { response: 'Invalid credentials.' });
     }
 
