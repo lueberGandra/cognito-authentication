@@ -1,5 +1,4 @@
 import type { APIGatewayProxyEventV2 } from 'aws-lambda';
-import { } from '@aws-sdk/client-cognito-identity-provider';
 
 import { bodyParser } from '@/utils/bodyParser';
 import { signUp } from '@/libs/cognitoClient';
